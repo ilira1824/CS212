@@ -16,8 +16,6 @@ int main(int argc, char** argv) {
     cout << "Enter second integer: ";
     cin >> item4;
 
-  // Visual Studio style allows you to deal with C++ variables
-  // directly in your inline code
     asm (
       ".intel_syntax noprefix;" 
       "sub EAX, EBX;"           // Subtract first two numbers
