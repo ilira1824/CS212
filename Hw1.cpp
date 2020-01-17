@@ -30,6 +30,5 @@ int main(int argc, char** argv) {
     cout << "The second difference: " << sub2 << endl;
     cout << "Differences added together: " << sub3 << endl;
 
-
     return 0;
 }
