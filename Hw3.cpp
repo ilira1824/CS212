@@ -30,8 +30,6 @@ int main() {
 
 
     asm (
-        "push EAX;"
-        "fld DWORD PTR [ESP - 8];"
         "cmp EBX, 97;" // area case
         "je area;"
         "cmp EBX, 115;" // sine case
@@ -50,32 +48,84 @@ int main() {
         "je log10;"
 
         "sine:"
+            "push EAX;"
+            "fld DWORD PTR [ESP];"
             "fsin;"
             "fstp DWORD PTR [ESP];"
             "jmp end;"
         "cosine:"
+            "push EAX;"
+            "fld DWORD PTR [ESP];"
             "fcos;"
             "fstp DWORD PTR [ESP];"
             "jmp end;"
         "tangent:"
+            "push EAX;"
+            "fld DWORD PTR [ESP];"
             "fsincos;"
             "fdiv st(1), st(0);"            // st(0) = cos      st(1) = sin
             "fstp DWORD PTR [ESP + 4];"
             "fstp DWORD PTR [ESP];"
             "jmp end;"
         "area:"                             // PI r^2
+            "push EAX;"
+            "fld DWORD PTR [ESP];"
             "fmul st(0), st(0);"
             "fldpi;"
             "fmul st(0), st(1);"
             "fstp DWORD PTR [ESP];"
             "jmp end;"
         "volume:"                           // 4/3 Pi r^3
+            "mov ECX, 3;"
+            "mov EDX, 4;"
+            "push ECX;"
+            "fld DWORD PTR [ESP];"
+            "push EDX;"
+            "fld DWORD PTR [ESP];"          // st(2) = input
+            "fdiv st(0), st(1);"            // st(0) = 4/3
+            "fldpi;"
+            "fmul st(0), st(1);"
+            "push EAX;"
+            "fld DWORD PTR [ESP];"
             "fmul st(0), st(0);"
-            "fmul st(0), st(0);"            // r^3
+            "fld DWORD PTR [ESP];"
+            "fmul st(0), st(1);"
+            "fmul st(0), st(2);"
+            "fstp DWORD PTR [ESP];"
             "jmp end;"
         "log2:"
+            "push EAX;"
+            "fld DWORD PTR [ESP];"
+            "fld1;"
+            "fld1;"
+            "fadd st(0), st(0);"
+            "fyl2x;"                        // st(0) = log2(2)
+            "fld1;"
+            "fld DWORD PTR [ESP];"
+            "fyl2x;"                        // st(0) = log2(input)          st(1) = log2(2)
+            "fdivp st(1), st(0);"
+            "fstp DWORD PTR [ESP];"
+            "jmp end;"
         "ln:"
+            "push EAX;"
+            "fld DWORD PTR [ESP];"
+            "fld1;"
+            "fld DWORD PTR [ESP];"
+            "fyl2x;"                        // st(0) = log2(input)
+            "fldl2e;"                       // st(0) = log2(e)           st(1) = log2(input)
+            "fdivp st(1), st(0);"
+            "fstp DWORD PTR [ESP];"
+            "jmp end;"
         "log10:"
+            "push EAX;"
+            "fld DWORD PTR [ESP];" 
+            "fld1;"                         // st(0) = 1
+            "fld DWORD PTR [ESP];"
+            "fyl2x;"                        // st(1) = 1 * log2(input)          st(0) = input
+            "fldl2t;"                       // st(0) = log2(10)           st(1) = input          st(2) = log2(input)
+            "fdiv st(0), st(1);"
+            "fstp DWORD PTR [ESP];"
+            "jmp end;"
         "end:"
             "mov EAX, DWORD PTR [ESP];"
 
